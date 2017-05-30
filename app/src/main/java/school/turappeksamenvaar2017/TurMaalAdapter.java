@@ -1,12 +1,9 @@
 package school.turappeksamenvaar2017;
 
 import android.content.Context;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
@@ -19,10 +16,10 @@ import java.util.ArrayList;
 public class TurMaalAdapter extends BaseAdapter {
 
     Context kontekst;
-    TurMaal[] turMaal;
+    ArrayList<TurMaal> turMaal;
     LayoutInflater oppBlåser;
 
-    public TurMaalAdapter(Context c, TurMaal[] t){
+    public TurMaalAdapter(Context c, ArrayList<TurMaal> t){
         kontekst = c;
         turMaal = t;
         oppBlåser = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -30,12 +27,12 @@ public class TurMaalAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return turMaal.length;
+        return turMaal.size();
     }
 
     @Override
     public Object getItem(int posisjon) {
-        return turMaal[posisjon];
+        return turMaal.get(posisjon);
     }
 
     @Override
@@ -51,17 +48,25 @@ public class TurMaalAdapter extends BaseAdapter {
             synsHolder = new ViewHolder();
             synsHolder.textViewTurMaalNavn = (TextView) konversjonsSyn.findViewById(R.id.turMaalNavn);
             synsHolder.textViewTurMaalType = (TextView) konversjonsSyn.findViewById(R.id.turMaalType);
-            synsHolder.textViewTurMaalHøyde = (TextView) konversjonsSyn.findViewById(R.id.turMaalHøyde);
+            synsHolder.textViewTurMaalHoyde = (TextView) konversjonsSyn.findViewById(R.id.turMaalHoyde);
             konversjonsSyn.setTag(synsHolder);
         }
         else {
             synsHolder = (ViewHolder) konversjonsSyn.getTag();
         }
 
-        TurMaal detteMaalet = turMaal[posisjon];
+        TurMaal detteMaalet = turMaal.get(posisjon);
         synsHolder.textViewTurMaalNavn.setText(detteMaalet.navn);
         synsHolder.textViewTurMaalType.setText(detteMaalet.type);
-        synsHolder.textViewTurMaalHøyde.setText(detteMaalet.høyde);
+        synsHolder.textViewTurMaalHoyde.setText(detteMaalet.hoyde+"");
+
+        konversjonsSyn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TurMaalFragment fragment = new TurMaalFragment();
+                MainActivity.byttFragment(fragment);
+            }
+        });
 
         return konversjonsSyn;
     }
@@ -69,6 +74,6 @@ public class TurMaalAdapter extends BaseAdapter {
     private static class ViewHolder{
         public TextView textViewTurMaalNavn;
         public TextView textViewTurMaalType;
-        public TextView textViewTurMaalHøyde;
+        public TextView textViewTurMaalHoyde;
     }
 }

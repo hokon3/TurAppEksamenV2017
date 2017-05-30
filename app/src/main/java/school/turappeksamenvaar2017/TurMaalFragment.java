@@ -11,18 +11,19 @@ import android.view.ViewGroup;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TurMaalListe extends Fragment {
+public class TurMaalFragment extends Fragment {
 
 
-    public TurMaalListe() {
-        // Nødvendig tom konstruktør
+    public TurMaalFragment() {
+        // Required empty public constructor
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_tur_maal_liste, container, false);
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_tur_maal, container, false);
     }
 
 }
