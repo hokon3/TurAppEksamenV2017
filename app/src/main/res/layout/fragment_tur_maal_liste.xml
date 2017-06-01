@@ -9,28 +9,27 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:text="@string/tittel" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            android:gravity="left"/>
+            android:text="@string/navn"
+            android:layout_alignParentLeft="true"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            android:gravity="center"/>
+            android:text="@string/type"
+            android:layout_centerInParent="true"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            android:gravity="right"/>
-    </LinearLayout>
+            android:text="@string/hoyde"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
 
     <ListView
         android:id="@+id/turMaalListe"

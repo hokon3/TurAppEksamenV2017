@@ -25,7 +25,7 @@ public class TurMaal {
     int hoyde;
     double latitude, longitude;
 
-    public TurMaal(String navn, String type, String beskrivelse, String bildeUrl, String bruker, int hoyde, double latitude, double longitude) {
+    public TurMaal(String navn, String type, String beskrivelse, String bildeUrl, double latitude, double longitude, int hoyde, String bruker) {
         this.navn = navn;
         this.type = type;
         this.beskrivelse = beskrivelse;

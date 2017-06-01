@@ -55,7 +55,7 @@ public class TurMaalAdapter extends BaseAdapter {
             synsHolder = (ViewHolder) konversjonsSyn.getTag();
         }
 
-        TurMaal detteMaalet = turMaal.get(posisjon);
+        final TurMaal detteMaalet = turMaal.get(posisjon);
         synsHolder.textViewTurMaalNavn.setText(detteMaalet.navn);
         synsHolder.textViewTurMaalType.setText(detteMaalet.type);
         synsHolder.textViewTurMaalHoyde.setText(detteMaalet.hoyde+"");
@@ -64,7 +64,7 @@ public class TurMaalAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 TurMaalFragment fragment = new TurMaalFragment();
-                MainActivity.byttFragment(fragment);
+                MainActivity.byttFragment(fragment, detteMaalet);
             }
         });
 
