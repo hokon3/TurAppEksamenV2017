@@ -1,8 +1,13 @@
 package school.turappeksamenvaar2017;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     static FragmentManager fm;
     static FragmentTransaction transaksjon;
     static final String DATABASEURL = "http://itfag.usn.no/~142840/turmaal/api.php";
+    static final int MIN_LOV_KODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +27,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         fm = getSupportFragmentManager();
+
+
+        sjekkOmLov();
 
         if (savedInstanceState == null){
             TurMaalListeFragment turMaalListeFragment = new TurMaalListeFragment();
@@ -89,4 +98,11 @@ public class MainActivity extends AppCompatActivity {
         transaksjon.addToBackStack(null);
         transaksjon.commit();
     }
+
+    public void sjekkOmLov(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MIN_LOV_KODE);
+        }
+    }
+
 }

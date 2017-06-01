@@ -6,8 +6,72 @@
     android:orientation="vertical">
 
     <EditText
+        android:id="@+id/leggTilNavn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/navn"/>
+
+    <EditText
+        android:id="@+id/leggTilType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/type"/>
+
+    <EditText
+        android:id="@+id/leggTilBeskrivelse"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/beskrivelse"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/knappTaBilde"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Ta bilde"/>
+
+        <Button
+            android:id="@+id/knappLeggTilBilde"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="legg til bilde"/>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/leggTilBilde"
+        android:layout_width="250dp"
+        android:layout_height="250dp" />
+
+    <TextView
+        android:id="@+id/leggTilLatitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/leggTilLongitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/leggTilHoyde"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/leggTilBruker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/knappLeggTilTurmaal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Legg til turmål"/>
+
+
 
 </LinearLayout>
