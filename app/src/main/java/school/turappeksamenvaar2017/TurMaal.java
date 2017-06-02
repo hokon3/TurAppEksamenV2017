@@ -1,5 +1,7 @@
 package school.turappeksamenvaar2017;
 
+import android.database.Cursor;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,6 +27,10 @@ public class TurMaal {
     int hoyde;
     double latitude, longitude;
 
+    public TurMaal(){
+
+    }
+
     public TurMaal(String navn, String type, String beskrivelse, String bildeUrl, double latitude, double longitude, int hoyde, String bruker) {
         this.navn = navn;
         this.type = type;
@@ -45,6 +51,19 @@ public class TurMaal {
         longitude = jsonTM.optDouble(KOL_NAVN_LONG);
         hoyde = jsonTM.optInt(KOL_NAVN_HOYDE);
         bruker = jsonTM.optString(KOL_NAVN_BRUKER);
+    }
+
+    public static TurMaal hentTurMaalFraPeker(Cursor peker){
+        TurMaal turMaal = new TurMaal();
+        turMaal.navn = peker.getString(peker.getColumnIndex(SQLiteAdapter.NAVN));
+        turMaal.type = peker.getString(peker.getColumnIndex(SQLiteAdapter.TYPE));
+        turMaal.beskrivelse = peker.getString(peker.getColumnIndex(SQLiteAdapter.BESKRIVELSE));
+        turMaal.bildeUrl = peker.getString(peker.getColumnIndex(SQLiteAdapter.BILDE));
+        turMaal.latitude = peker.getDouble(peker.getColumnIndex(SQLiteAdapter.LATITUDE));
+        turMaal.longitude = peker.getDouble(peker.getColumnIndex(SQLiteAdapter.LONGITUDE));
+        turMaal.hoyde = peker.getInt(peker.getColumnIndex(SQLiteAdapter.HOYDE));
+        turMaal.bruker = peker.getString(peker.getColumnIndex(SQLiteAdapter.BRUKER));
+        return turMaal;
     }
 
     public static ArrayList<TurMaal> lagListe(String data) throws JSONException{
