@@ -9,7 +9,9 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/tittel" />
+        android:text="@string/tittel"
+        android:textStyle="bold"
+        android:textSize="30sp"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -18,17 +20,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/navn"
-            android:layout_alignParentLeft="true"/>
+            android:layout_alignParentLeft="true"
+            android:textStyle="bold"
+            />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/type"
-            android:layout_centerInParent="true"/>
+            android:layout_centerInParent="true"
+            android:textStyle="bold"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/hoyde"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true"
+            android:textStyle="bold"/>
     </RelativeLayout>
 
     <ListView

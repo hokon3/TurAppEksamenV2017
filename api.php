@@ -1,6 +1,6 @@
 <?php
 //liste over mulige hendelser
-$possible_url = array("hent_liste", "legg_til_turmaal");
+$possible_url = array("hent_liste", "legg_til_turmaal", "legg_til_bilde");
 //retur variabel
 $returverdi = "En feil oppstod.";
 
@@ -25,6 +25,12 @@ if (isset($_GET["aksjon"]) && in_array($_GET["aksjon"], $possible_url)) {
                 $returverdi = legg_til_turmaal($dblink, $_GET["navn"],$_GET["type"],$_GET["beskrivelse"],$_GET["bilde"],$_GET["latitude"],$_GET["longitude"],$_GET["hoyde"],$_GET["bruker"]);
             else
                 $returverdi = "URL mangler en variabel";
+            break;
+        case "legg_til_bilde": //laster opp et bilde til serveren
+            if (isset($_POST["navn"]) and isset($_FILES["bilde"]["name"]))
+                $returverdi = legg_til_bilde($_POST["navn"]);
+            else
+                $returverdi = "Navn eller fil mangler";
             break;
     }
 }
@@ -51,6 +57,18 @@ function hent_liste($dblink)
 function legg_til_turmaal($dblink, $navn, $type, $beskrivelse, $bilde, $latitude, $longitude, $hoyde, $bruker){
     $sql = "CALL legg_til_turmaal('$navn','$type','$beskrivelse','$bilde','$latitude','$longitude','$hoyde','$bruker')";
     return mysqli_query($dblink,$sql);
+}
+
+function legg_til_bilde($navn){
+    $filInfo = pathinfo($_FILES["bilde"]["name"]);
+    $utvidelse = $filInfo["extension"];
+    $filSti = "bilder/" . $navn . "." . $utvidelse;
+    try {
+        return move_uploaded_file($_FILES["bilde"]["tmp_name"], $filSti);
+    }
+    catch(Exception $e){
+        return "feil under opplasting av bilde";
+    }
 }
 
 ?>

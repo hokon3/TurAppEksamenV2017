@@ -24,6 +24,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,8 +35,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.gotev.uploadservice.MultipartUploadRequest;
+
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -44,6 +48,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 
 /**
@@ -52,6 +57,7 @@ import java.util.Date;
 public class LeggTilTurMaalFragment extends Fragment {
 
     final static String DBORDRE = "?aksjon=legg_til_turmaal";
+    final static String DBBILDE = "?aksjon=legg_til_bilde";
     final static int AKSJON_TA_BILDE = 1;
     final static int AKSJON_VELG_BILDE = 2;
 
@@ -91,6 +97,16 @@ public class LeggTilTurMaalFragment extends Fragment {
         kLeggTilBilde = (Button)syn.findViewById(R.id.knappLeggTilBilde);
         kLeggTilTurmaal = (Button)syn.findViewById(R.id.knappLeggTilTurmaal);
 
+        if (savedInstanceState != null){
+            eTNavn.setText(savedInstanceState.getString("navn"));
+            eTType.setText(savedInstanceState.getString("type"));
+            eTBeskrivelse.setText(savedInstanceState.getString("beskrivelse"));
+            bildeSti = savedInstanceState.getString("bilde","");
+            if (!bildeSti.equals("")){
+                visBilde();
+            }
+        }
+
         Location lokasjon = hentLokasjon();
         if (lokasjon != null){
             tVLatitude.setText(lokasjon.getLatitude()+"");
@@ -124,6 +140,17 @@ public class LeggTilTurMaalFragment extends Fragment {
         return syn;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (bildeSti != null){
+            outState.putString("bilde",bildeSti);
+        }
+        outState.putString("navn",eTNavn.getText()+"");
+        outState.putString("type",eTType.getText()+"");
+        outState.putString("beskrivelse",eTBeskrivelse.getText()+"");
+        super.onSaveInstanceState(outState);
+    }
+
     public void taBilde(){
         File bildeFil = null;
         Intent taBildeIntensjon = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -136,7 +163,7 @@ public class LeggTilTurMaalFragment extends Fragment {
             }
 
             if (bildeFil != null){
-                Uri bildeUri = Uri.fromFile(bildeFil);
+                Uri bildeUri = FileProvider.getUriForFile(getActivity(),"filgiver",bildeFil);
                 taBildeIntensjon.putExtra(MediaStore.EXTRA_OUTPUT,bildeUri);
                 startActivityForResult(taBildeIntensjon, AKSJON_TA_BILDE);
             }
@@ -145,7 +172,7 @@ public class LeggTilTurMaalFragment extends Fragment {
 
     private File lagBildeFil() throws IOException{
         String tid = new SimpleDateFormat("yyyymmdd_HHmmss").format(new Date());
-        File bildeFil = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),tid);
+        File bildeFil = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),tid+".png");
         bildeSti = bildeFil.getAbsolutePath();
         return bildeFil;
     }
@@ -175,7 +202,7 @@ public class LeggTilTurMaalFragment extends Fragment {
             sqLiteAdapter.aapne();
             double dLatitude = Double.parseDouble(latitude);
             double dLongitude = Double.parseDouble(longitude);
-            int iHoyde = Integer.parseInt(hoyde);
+            int iHoyde = (int)Double.parseDouble(hoyde);
             ContentValues nyeVerdier = new ContentValues();
             nyeVerdier.put(SQLiteAdapter.NAVN, navn);
             nyeVerdier.put(SQLiteAdapter.TYPE, type);
@@ -227,8 +254,9 @@ public class LeggTilTurMaalFragment extends Fragment {
     }
 
     private void visBilde(){
-        int maalW = iVBilde.getWidth();
-        int maalH = iVBilde.getHeight();
+        iVBilde.setVisibility(View.VISIBLE);
+        int maalW = 250;
+        int maalH = 250;
 
         BitmapFactory.Options bmOpsjoner = new BitmapFactory.Options();
         bmOpsjoner.inJustDecodeBounds = true;
@@ -242,7 +270,6 @@ public class LeggTilTurMaalFragment extends Fragment {
         bmOpsjoner.inJustDecodeBounds = false;
         Bitmap bitKart = BitmapFactory.decodeFile(bildeSti, bmOpsjoner);
         iVBilde.setImageBitmap(bitKart);
-        iVBilde.setVisibility(View.VISIBLE);
     }
 
     // Sjekker om nettverkstilgang
@@ -258,6 +285,25 @@ public class LeggTilTurMaalFragment extends Fragment {
         @Override
         protected Long doInBackground(String... params) {
             HttpURLConnection tilkobling = null;
+            if (!bildeSti.equals("")) {
+                String URI = MainActivity.DATABASEURL + DBBILDE;
+                try {
+                    String lastOppId = UUID.randomUUID().toString();
+
+                    new MultipartUploadRequest(getActivity(), lastOppId, URI)
+                            .addFileToUpload(params[3], "bilde")
+                            .addParameter("navn",params[0])
+                            .setMaxRetries(2)
+                            .startUpload();
+                    params[3] = MainActivity.BILDEMAPPEURL+params[0]+".png";
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    return 1l;
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                    return 1l;
+                }
+            }
             String URI = MainActivity.DATABASEURL+DBORDRE+"&navn="+params[0]+"&type="+params[1]
                     +"&beskrivelse="+params[2]+"&bilde="+params[3]+"&latitude="+params[4]
                     +"&longitude="+params[5]+"&hoyde="+params[6]+"&bruker="+params[7];

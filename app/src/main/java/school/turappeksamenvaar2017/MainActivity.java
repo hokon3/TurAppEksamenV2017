@@ -3,6 +3,7 @@ package school.turappeksamenvaar2017;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,15 +11,18 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     static FragmentManager fm;
     static FragmentTransaction transaksjon;
     static final String DATABASEURL = "http://itfag.usn.no/~142840/turmaal/api.php";
+    static final String BILDEMAPPEURL = "http://itfag.usn.no/~142840/turmaal/bilder/";
     static final int MIN_LOV_KODE = 1;
 
     @Override
@@ -35,8 +39,6 @@ public class MainActivity extends AppCompatActivity {
             TurMaalListeFragment turMaalListeFragment = new TurMaalListeFragment();
             leggTilFragment(turMaalListeFragment);
         }
-
-
     }
 
     @Override
