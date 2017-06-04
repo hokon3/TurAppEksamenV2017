@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- * Created by hakom_000 on 29.05.2017.
+ * Adapter klasse for å hvis Turmål i ListView
  */
 
 public class TurMaalAdapter extends BaseAdapter {

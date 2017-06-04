@@ -2,12 +2,17 @@
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <RelativeLayout
+    <LinearLayout
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         tools:context="school.turappeksamenvaar2017.TurMaalFragment">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -16,94 +21,121 @@
         <TextView
             android:id="@+id/TvNavn"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
+        </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/type"
-            android:layout_below="@id/TvNavn"/>
+            android:text="@string/type" />
 
         <TextView
             android:id="@+id/TvType"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/TvNavn"/>
+            android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/beskrivelse"
-            android:layout_below="@id/TvType"/>
+            android:text="@string/beskrivelse" />
 
         <TextView
             android:id="@+id/TvBeskrivelse"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/TvType"/>
+            android:layout_height="wrap_content" />
+        </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/bilde"
-            android:layout_below="@id/TvBeskrivelse"/>
+            android:text="@string/bilde" />
 
         <ImageView
             android:id="@+id/IvBilde"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/TvBeskrivelse"/>
+            android:layout_height="wrap_content" />
+        </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/latitude"
-            android:layout_below="@id/IvBilde"/>
+            android:text="@string/latitude" />
 
         <TextView
             android:id="@+id/TvLatitude"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/IvBilde"/>
+            android:layout_height="wrap_content" />
+        </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/longitude"
-            android:layout_below="@id/TvLatitude"/>
+            android:text="@string/longitude" />
 
         <TextView
             android:id="@+id/TvLongitude"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/TvLatitude"/>
+            android:layout_height="wrap_content" />
+        </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/hoyde"
-            android:layout_below="@id/TvLongitude"/>
+            android:text="@string/hoyde" />
 
         <TextView
             android:id="@+id/TvHoyde"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/TvLongitude"/>
+            android:layout_height="wrap_content" />
+        </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/bruker"
-            android:layout_below="@id/TvHoyde"/>
+            android:text="@string/bruker" />
 
         <TextView
             android:id="@+id/TvBruker"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/knappVisIKart"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/TvHoyde"/>
+            android:text="Vis i kart"/>
 
-
-
-    </RelativeLayout>
+    </LinearLayout>
 
 </ScrollView>

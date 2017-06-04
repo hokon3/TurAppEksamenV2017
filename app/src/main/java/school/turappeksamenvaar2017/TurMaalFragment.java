@@ -2,10 +2,12 @@ package school.turappeksamenvaar2017;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +32,7 @@ import java.net.URLConnection;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for å hvis informasjon om et turmål
  */
 public class TurMaalFragment extends Fragment {
 
@@ -37,6 +40,7 @@ public class TurMaalFragment extends Fragment {
     TextView tekstVisningNavn, tekstVisningType, tekstVisningBeskrivelse, tekstVisningLatitude, tekstVisningLongitude,
             tekstVisningHoyde, tekstVisningBruker;
     ImageView bildeVisningBilde;
+    Button knappVisKart;
     Bitmap bitMap;
     Bundle data;
 
@@ -48,12 +52,14 @@ public class TurMaalFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //Henter Bundle med data om turmål
         if (savedInstanceState == null) {
             data = getArguments();
         }
         else {
             data = savedInstanceState.getBundle("data");
         }
+        //Lager turmål utifra data
         String navn = data.getString("navn");
         String type = data.getString("type");
         String beskrivelse = data.getString("beskrivelse");
@@ -69,9 +75,9 @@ public class TurMaalFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View syn = inflater.inflate(R.layout.fragment_tur_maal, container, false);
 
+        //Henter referanser
         tekstVisningNavn = (TextView)syn.findViewById(R.id.TvNavn);
         tekstVisningType = (TextView)syn.findViewById(R.id.TvType);
         tekstVisningBeskrivelse = (TextView)syn.findViewById(R.id.TvBeskrivelse);
@@ -80,7 +86,9 @@ public class TurMaalFragment extends Fragment {
         tekstVisningLongitude = (TextView)syn.findViewById(R.id.TvLongitude);
         tekstVisningHoyde = (TextView)syn.findViewById(R.id.TvHoyde);
         tekstVisningBruker = (TextView)syn.findViewById(R.id.TvBruker);
+        knappVisKart = (Button)syn.findViewById(R.id.knappVisIKart);
 
+        //Setter innhold
         tekstVisningNavn.setText(turMaal.navn);
         tekstVisningType.setText(turMaal.type);
         tekstVisningBeskrivelse.setText(turMaal.beskrivelse);
@@ -89,11 +97,20 @@ public class TurMaalFragment extends Fragment {
         tekstVisningHoyde.setText(turMaal.hoyde+"");
         tekstVisningBruker.setText(turMaal.bruker);
 
+        //Fester lytter til knapp for å vise i kart
+        knappVisKart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                visKart();
+            }
+        });
+
+        //Henter bilde hvis turmålet har et bilde
         if(!turMaal.bildeUrl.equals("")){
             if (harNett()){
                 new LastBilde().execute(turMaal.bildeUrl);
             }
-            else {
+            else { //Sjekker om bildet finnes lokalt hvis du ikke har nett
                 File bildeFil = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), turMaal.navn);
                 if (bildeFil.exists()){
                     bitMap = BitmapFactory.decodeFile(bildeFil.getAbsolutePath());
@@ -111,14 +128,32 @@ public class TurMaalFragment extends Fragment {
         super.onSaveInstanceState(outState);
     }
 
-
-
+    /**
+     * Metode for å vise et bilde
+     */
     public void visBilde(){
         bildeVisningBilde.setVisibility(View.VISIBLE);
         bildeVisningBilde.setImageBitmap(Bitmap.createScaledBitmap(bitMap,250,250,false));
     }
 
-    // Sjekker om nettverkstilgang
+    /**
+     * Metode for å vise turmål på kart
+     */
+    public void visKart(){
+        //Url for kart med markør
+        //Endring for å få markør hentet herfra:
+        //https://stackoverflow.com/questions/3990110/how-to-show-marker-in-maps-launched-by-geo-uri-intent
+        String geoUrl = "geo:" + turMaal.latitude + ","
+                + turMaal.longitude + "?q=" + turMaal.latitude + "," + turMaal.longitude + "(" + turMaal.navn + ")" ;
+        Uri geoUri = Uri.parse(geoUrl);
+        Intent geoKart = new Intent(Intent.ACTION_VIEW,geoUri);
+        startActivity(geoKart);
+    }
+
+    /**
+     * Metoden sjekker om du har nett
+     * @return Sant hvis du har nett, ellers usant
+     */
     public boolean harNett()
     {
         ConnectivityManager tilkoblingsStyrer = (ConnectivityManager) getActivity().getSystemService(Activity.CONNECTIVITY_SERVICE);
@@ -126,15 +161,20 @@ public class TurMaalFragment extends Fragment {
         return (nettverkInfo != null && nettverkInfo.isConnected());
     }
 
+    /**
+     * Asynkron klasse for å laste inn et bilde
+     */
     private class LastBilde extends AsyncTask<String, Void, Long> {
 
         @Override
         protected Long doInBackground(String... params) {
+            //Sjekker om bildet finnes lokalt fra før
             File bildeFil = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), turMaal.navn);
             if (bildeFil.exists()){
                 bitMap = BitmapFactory.decodeFile(bildeFil.getAbsolutePath());
                 return 0l;
             }
+            //Laster ned bildet
             try{
                 URL bildeUrl = new URL(params[0]);
                 URLConnection tilkobling = bildeUrl.openConnection();

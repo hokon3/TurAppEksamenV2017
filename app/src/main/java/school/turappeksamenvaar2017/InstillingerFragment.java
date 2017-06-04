@@ -12,13 +12,13 @@ import android.view.ViewGroup;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for instillinger
  */
 public class InstillingerFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
 
     public InstillingerFragment() {
-        // Required empty public constructor
+        // Nødvendig tom konstruktør
     }
 
     @Override

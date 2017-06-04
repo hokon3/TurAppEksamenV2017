@@ -5,13 +5,25 @@
     tools:context="school.turappeksamenvaar2017.TurMaalListeFragment"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/tittel"
-        android:textStyle="bold"
-        android:textSize="30sp"/>
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tittel"
+            android:textStyle="bold"
+            android:textSize="30sp"/>
+
+        <Button
+            android:id="@+id/knappSorterEtterDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sorter etter distanse"/>
+    </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"

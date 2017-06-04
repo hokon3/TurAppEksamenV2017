@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
 
         fm = getSupportFragmentManager();
 
-
         sjekkOmLov();
 
         if (savedInstanceState == null){
@@ -51,11 +50,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.aksjon_instillinger:
+            case R.id.aksjon_instillinger: //Hvis du vil inn i instillinger
                 InstillingerFragment instillingerFragment = new InstillingerFragment();
                 MainActivity.byttFragment(instillingerFragment);
                 break;
-            case R.id.aksjon_legg_til:
+            case R.id.aksjon_legg_til: //Hvis du vil legge til turmål
                 LeggTilTurMaalFragment leggTilTurMaalFragment = new LeggTilTurMaalFragment();
                 MainActivity.byttFragment(leggTilTurMaalFragment);
                 break;
@@ -63,6 +62,10 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Metode for å bytte ut det aktive fragmentet med et annet fragment
+     * @param nyttFragment Fragmentet som blir byttet til
+     */
     public static void byttFragment(Fragment nyttFragment)
     {
         transaksjon = fm.beginTransaction();
@@ -72,8 +75,14 @@ public class MainActivity extends AppCompatActivity {
         transaksjon.commit();
     }
 
+    /**
+     * Versjon av byttFragment for å gå til hvisning av et turmål
+     * @param nyttFragment Fragmentet som blir byttet til
+     * @param turMaal Turmålet som skal bli vist.
+     */
     public static void byttFragment(Fragment nyttFragment, TurMaal turMaal)
     {
+        //data om turmål brytt ned og lagret i en Bundle.
         Bundle data = new Bundle();
         data.putString("navn",turMaal.navn);
         data.putString("type",turMaal.type);
@@ -92,6 +101,10 @@ public class MainActivity extends AppCompatActivity {
         transaksjon.commit();
     }
 
+    /**
+     * Metode for å legge til et Fragment
+     * @param newFragment Fragmentet som blir lagt til
+     */
     public static void leggTilFragment(Fragment newFragment)
     {
         transaksjon = fm.beginTransaction();
@@ -101,6 +114,9 @@ public class MainActivity extends AppCompatActivity {
         transaksjon.commit();
     }
 
+    /**
+     * Metoden spør om tilatelse for lokasjon hvis appen ikke allerede har tilatelse
+     */
     public void sjekkOmLov(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MIN_LOV_KODE);

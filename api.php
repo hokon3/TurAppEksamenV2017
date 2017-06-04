@@ -59,6 +59,7 @@ function legg_til_turmaal($dblink, $navn, $type, $beskrivelse, $bilde, $latitude
     return mysqli_query($dblink,$sql);
 }
 
+//funksjon som lagrer bilde på serveren
 function legg_til_bilde($navn){
     $filInfo = pathinfo($_FILES["bilde"]["name"]);
     $utvidelse = $filInfo["extension"];

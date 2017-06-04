@@ -52,7 +52,7 @@ import java.util.UUID;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for å legge til turmål
  */
 public class LeggTilTurMaalFragment extends Fragment {
 
@@ -76,6 +76,7 @@ public class LeggTilTurMaalFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Henter brukernavn fra lagrede instillinger
         SharedPreferences foretrekninger = PreferenceManager.getDefaultSharedPreferences(getContext());
         bruker = foretrekninger.getString("bruker","anonym");
     }
@@ -85,6 +86,7 @@ public class LeggTilTurMaalFragment extends Fragment {
                              Bundle savedInstanceState) {
         View syn = inflater.inflate(R.layout.fragment_legg_til_tur_maal, container, false);
 
+        //Henter referanser
         eTNavn = (EditText)syn.findViewById(R.id.leggTilNavn);
         eTType = (EditText)syn.findViewById(R.id.leggTilType);
         eTBeskrivelse = (EditText)syn.findViewById(R.id.leggTilBeskrivelse);
@@ -97,6 +99,7 @@ public class LeggTilTurMaalFragment extends Fragment {
         kLeggTilBilde = (Button)syn.findViewById(R.id.knappLeggTilBilde);
         kLeggTilTurmaal = (Button)syn.findViewById(R.id.knappLeggTilTurmaal);
 
+        //Hvis det finnes lagret data så blir den gjennopprettet.
         if (savedInstanceState != null){
             eTNavn.setText(savedInstanceState.getString("navn"));
             eTType.setText(savedInstanceState.getString("type"));
@@ -107,6 +110,7 @@ public class LeggTilTurMaalFragment extends Fragment {
             }
         }
 
+        //Henter lokasjons info
         Location lokasjon = hentLokasjon();
         if (lokasjon != null){
             tVLatitude.setText(lokasjon.getLatitude()+"");
@@ -140,6 +144,9 @@ public class LeggTilTurMaalFragment extends Fragment {
         return syn;
     }
 
+    /**
+     * Lagrer data for å håndtere rotasjon.
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         if (bildeSti != null){
@@ -151,7 +158,19 @@ public class LeggTilTurMaalFragment extends Fragment {
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    public void onDestroy() {
+        if (sqLiteAdapter != null){
+            sqLiteAdapter.steng();
+        }
+        super.onDestroy();
+    }
+
+    /**
+     * Metoden takler hva som skjer når du vil ta et bilde med innebygget kamera
+     */
     public void taBilde(){
+        //Lager bildefil og intensjon
         File bildeFil = null;
         Intent taBildeIntensjon = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (taBildeIntensjon.resolveActivity(getActivity().getPackageManager()) != null){
@@ -161,7 +180,8 @@ public class LeggTilTurMaalFragment extends Fragment {
             catch (IOException e) {
                 e.printStackTrace();
             }
-
+            //hvis bildefilen som bildet skal bli lagret i ble opprettet, blir Uri laget
+            // og intensjon startet
             if (bildeFil != null){
                 Uri bildeUri = FileProvider.getUriForFile(getActivity(),"filgiver",bildeFil);
                 taBildeIntensjon.putExtra(MediaStore.EXTRA_OUTPUT,bildeUri);
@@ -170,6 +190,11 @@ public class LeggTilTurMaalFragment extends Fragment {
         }
     }
 
+    /**
+     * Metoden oppretter en fil for lagring av bilde
+     * @return Bildefil
+     * @throws IOException
+     */
     private File lagBildeFil() throws IOException{
         String tid = new SimpleDateFormat("yyyymmdd_HHmmss").format(new Date());
         File bildeFil = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),tid+".png");
@@ -177,6 +202,9 @@ public class LeggTilTurMaalFragment extends Fragment {
         return bildeFil;
     }
 
+    /**
+     * Metoden håndterer hva som skjer når du vil legge til et bilde fra telefonen
+     */
     public void leggTilBilde(){
         Intent velgBildeIntensjon = new Intent();
         velgBildeIntensjon.setType("image/*");
@@ -184,6 +212,9 @@ public class LeggTilTurMaalFragment extends Fragment {
         startActivityForResult(velgBildeIntensjon,AKSJON_VELG_BILDE);
     }
 
+    /**
+     * Metoden håndterer hva som skjer når du vil legge til et turmål
+     */
     public void leggTilTurmaal(){
         String navn = eTNavn.getText()+"";
         String type = eTType.getText()+"";
@@ -191,6 +222,7 @@ public class LeggTilTurMaalFragment extends Fragment {
         String latitude = tVLatitude.getText()+"";
         String longitude = tVLongitude.getText()+"";
         String hoyde = tVHoyde.getText()+"";
+        //Sjekker om noen felt er tomme.
         if (navn.equals("") || type.equals("") || beskrivelse.equals("") || latitude.equals("") || longitude.equals("") || hoyde.equals("")){
             Toast.makeText(getContext(),"Tomme felt er ikke tillat",Toast.LENGTH_SHORT).show();
         }
@@ -198,6 +230,7 @@ public class LeggTilTurMaalFragment extends Fragment {
             if (bildeSti == null){
                 bildeSti = "";
             }
+            //Lagrer turmål i SQLite databasen
             sqLiteAdapter = new SQLiteAdapter(getActivity());
             sqLiteAdapter.aapne();
             double dLatitude = Double.parseDouble(latitude);
@@ -214,10 +247,12 @@ public class LeggTilTurMaalFragment extends Fragment {
             nyeVerdier.put(SQLiteAdapter.BRUKER, bruker);
             sqLiteAdapter.settInnTurMaal(nyeVerdier);
 
+            //Hvis du harNett blir også dataen lagret i den sentrale databasen
             if (harNett()) {
                 TurMaalOpplaster turMaalOpplaster = new TurMaalOpplaster();
                 turMaalOpplaster.execute(navn,type,beskrivelse,bildeSti,latitude,longitude,hoyde,bruker);
             }
+            //Hvis du ikke har nett blir dette registrert i SQLite databasen.
             else {
                 nyeVerdier = new ContentValues();
                 nyeVerdier.put(SQLiteAdapter.NAVN, navn);
@@ -227,6 +262,10 @@ public class LeggTilTurMaalFragment extends Fragment {
         }
     }
 
+    /**
+     * Metoden henter ut lokasjonen hvis den kan.
+     * @return lokasjonen, lokasjon er null hvis noe gikk galt
+     */
     public Location hentLokasjon(){
         Location lokasjon = null;
         LocationManager lokasjonsStyrer = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -242,6 +281,12 @@ public class LeggTilTurMaalFragment extends Fragment {
         return lokasjon;
     }
 
+    /**
+     * Metoden takler hva som skjer når en av intensjonene for bilde returnerer
+     * @param henteKode Tilsvarer koden for intensjonen
+     * @param resultatKode  Kode for hvordan det gikk
+     * @param data Intensjonen som ble returnert
+     */
     @Override
     public void onActivityResult(int henteKode, int resultatKode, Intent data) {
         if (henteKode == AKSJON_TA_BILDE && resultatKode == Activity.RESULT_OK){
@@ -253,6 +298,9 @@ public class LeggTilTurMaalFragment extends Fragment {
         }
     }
 
+    /**
+     * Viser bilde utifra bildeSti variabelen, bildet blir skalert til 250x250
+     */
     private void visBilde(){
         iVBilde.setVisibility(View.VISIBLE);
         int maalW = 250;
@@ -272,7 +320,10 @@ public class LeggTilTurMaalFragment extends Fragment {
         iVBilde.setImageBitmap(bitKart);
     }
 
-    // Sjekker om nettverkstilgang
+    /**
+     * Sjekker om nettverkstilgang
+     * @return Sant hvis du har nett eller usant hvis du ikke har nett
+     */
     public boolean harNett()
     {
         ConnectivityManager tilkoblingsStyrer = (ConnectivityManager) getActivity().getSystemService(Activity.CONNECTIVITY_SERVICE);
@@ -280,13 +331,18 @@ public class LeggTilTurMaalFragment extends Fragment {
         return (nettverkInfo != null && nettverkInfo.isConnected());
     }
 
+    /**
+     * Intern klasse for å asynkront laste opp data til Sentral database
+     */
     private class TurMaalOpplaster extends AsyncTask<String, Void, Long>{
 
         @Override
         protected Long doInBackground(String... params) {
             HttpURLConnection tilkobling = null;
+            //Hvis bildesti finnes, blir bildet lastet opp
+            //Måten er hentet fra https://www.simplifiedcoding.net/android-upload-image-to-server/
             if (!bildeSti.equals("")) {
-                String URI = MainActivity.DATABASEURL + DBBILDE;
+                String URI = MainActivity.DATABASEURL + DBBILDE; //Nett adresse til api
                 try {
                     String lastOppId = UUID.randomUUID().toString();
 
@@ -304,10 +360,13 @@ public class LeggTilTurMaalFragment extends Fragment {
                     return 1l;
                 }
             }
+
+            //Lager Uri til api med Get parametre
             String URI = MainActivity.DATABASEURL+DBORDRE+"&navn="+params[0]+"&type="+params[1]
                     +"&beskrivelse="+params[2]+"&bilde="+params[3]+"&latitude="+params[4]
                     +"&longitude="+params[5]+"&hoyde="+params[6]+"&bruker="+params[7];
 
+            //Laster opp data til databasen
             try {
                 URL url = new URL(URI);
                 tilkobling = (HttpURLConnection)url.openConnection();

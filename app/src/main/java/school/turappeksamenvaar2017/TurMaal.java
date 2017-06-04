@@ -1,6 +1,7 @@
 package school.turappeksamenvaar2017;
 
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9,11 +10,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 /**
- * Created by hakom_000 on 29.05.2017.
+ * Klasse for Turmål
  */
 
-public class TurMaal {
+public class TurMaal implements Comparable<TurMaal>{
 
+    //Konstranter som tilsvarer kolonne navn i den sentrale databasen
     static final String KOL_NAVN_NAVN = "navn";
     static final String KOL_NAVN_TYPE = "type";
     static final String KOL_NAVN_BESKRIVELSE = "beskrivelse";
@@ -26,6 +28,7 @@ public class TurMaal {
     String navn, type, beskrivelse, bildeUrl, bruker;
     int hoyde;
     double latitude, longitude;
+    float distanse;
 
     public TurMaal(){
 
@@ -53,6 +56,11 @@ public class TurMaal {
         bruker = jsonTM.optString(KOL_NAVN_BRUKER);
     }
 
+    /**
+     * Metoden henter ut et turmål fra et Cursor objekt
+     * @param peker Cursor objekt
+     * @return Turmål
+     */
     public static TurMaal hentTurMaalFraPeker(Cursor peker){
         TurMaal turMaal = new TurMaal();
         turMaal.navn = peker.getString(peker.getColumnIndex(SQLiteAdapter.NAVN));
@@ -66,6 +74,12 @@ public class TurMaal {
         return turMaal;
     }
 
+    /**
+     * Metode for å generere en liste over turmål utifra JSON data
+     * @param data JSON data
+     * @return Liste over turmål
+     * @throws JSONException
+     */
     public static ArrayList<TurMaal> lagListe(String data) throws JSONException{
         ArrayList<TurMaal> liste = new ArrayList<>();
         JSONArray jsonTabell = new JSONArray(data);
@@ -76,5 +90,15 @@ public class TurMaal {
         }
 
         return liste;
+    }
+
+    /**
+     * Implementasjon av compareTo, brukes for sortering på distanse
+     * @param t Turmålet som skal bli samenlignet med
+     * @return posetivt hvis t er mindre, 0 hvis t er likt og negativt hvis t er større
+     */
+    @Override
+    public int compareTo(TurMaal t) {
+        return (int)(distanse-t.distanse);
     }
 }
